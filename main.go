@@ -1,13 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"image"
-	"image/color"
-	"image/gif"
-	"image/jpeg"
-	"image/png"
 	"io/ioutil"
 	"log"
 	"os"
@@ -22,13 +16,13 @@ func fileHash(data []byte) string {
 }
 
 func main() {
-	imga, _ := ioutil.ReadFile("aa.jpg")
+	imga, _ := ioutil.ReadFile("aa.png")
 	imgb := append(imga, ' ')
-	ioutil.WriteFile("bb.jpg", imgb, 0666)
+	ioutil.WriteFile("aa.png", imgb, 0666)
 
 	imgamd5 := fileHash(imga)
 
-	imgb, _ = ioutil.ReadFile("bb.jpg")
+	imgb, _ = ioutil.ReadFile("aa.png")
 	imgbmd5 := fileHash(imgb)
 
 	fmt.Println("imga:", imgamd5)
@@ -36,7 +30,40 @@ func main() {
 }
 */
 
-/*图片左上角打白点*/
+/*遍历目录给图片后面加个空*/
+func main() {
+	dir, _ := os.Getwd()
+	listFiles(dir)
+}
+
+//遍历目录
+func listFiles(dirName string) {
+	fileInfos, err := ioutil.ReadDir(dirName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, file := range fileInfos {
+		fileName := dirName + "/" + file.Name()
+
+		if !file.IsDir() && (strings.HasSuffix(fileName, "jpg") || strings.HasSuffix(fileName, "jpeg") || strings.HasSuffix(fileName, "png") || strings.HasSuffix(fileName, "gif")) {
+			fmt.Println(fileName)
+			imgAddSpace(fileName)
+		}
+
+		if file.IsDir() {
+			listFiles(fileName)
+		}
+	}
+}
+
+func imgAddSpace(fileName string) {
+	source := fileName
+	imga, _ := ioutil.ReadFile(source)
+	imgb := append(imga, ' ')
+	ioutil.WriteFile(source, imgb, 0666)
+}
+
+/*遍历目录给图片左上角打白点
 func main() {
 	dir, _ := os.Getwd()
 	listFiles(dir)
@@ -109,3 +136,4 @@ func encode(inputName string, file *os.File, rgba *image.RGBA) {
 		fmt.Errorf("不支持的图片格式")
 	}
 }
+*/
